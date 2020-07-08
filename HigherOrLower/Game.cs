@@ -6,14 +6,21 @@ namespace HigherOrLower
     public class Game
     {
         private readonly Stack<int> Numbers;
+        private Scoreboard Scoreboard;
         private int PreviousNumber;
         private int CurrentNumber;
 
+        /**
+         * When the game is initialised we will pop
+         * the first number from the stack to 
+         * get the flow started properly.
+         */
         public Game(Stack<int> numbers)
         {
             this.Numbers = numbers;
             this.PreviousNumber = this.Numbers.Pop();
             this.CurrentNumber = 0;
+            this.Scoreboard = new Scoreboard();
         }
 
         public void Run()
@@ -26,6 +33,17 @@ namespace HigherOrLower
                 try
                 {
                     bool GuessResult = this.ProcessGuess();
+
+                    if (GuessResult)
+                    {
+                        this.Scoreboard.IncrementScore();
+                    }
+
+                    if (!GuessResult)
+                    {
+                        this.Scoreboard.DecrementScore();
+                    }
+
                     Console.WriteLine(this.DisplayResult(GuessResult));
                     this.PreviousNumber = this.CurrentNumber;
                 }
@@ -34,6 +52,8 @@ namespace HigherOrLower
                     Console.WriteLine(e.Message);
                 }
             }
+
+            Console.WriteLine(this.Scoreboard.GetScoreAndStreak());
         }
 
         private bool ProcessGuess()
@@ -54,7 +74,7 @@ namespace HigherOrLower
         private string DisplayResult(bool GuessResult)
         {
             string ResultAdjective = GuessResult ? "Correct" : "Incorrect";
-            return $"{ResultAdjective}, The number was {this.CurrentNumber}";
+            return $"{ResultAdjective}!, The number was {this.CurrentNumber}";
         }
     }
 }
